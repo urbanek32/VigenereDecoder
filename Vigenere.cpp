@@ -35,7 +35,7 @@ Vigenere::~Vigenere()
 void Vigenere::Init()
 {
 	// read orginally alphabet into vector
-	std::fstream file("alphabet.txt", std::ios::in);
+	std::fstream file("alphabet2.txt", std::ios::in);
 	for (size_t i = 0; i < tab.size(); i++)
 	{
 		file >> tab[0][i]; // read every char into vector
@@ -68,7 +68,6 @@ void Vigenere::Init()
 void Vigenere::decrypt(const std::string key)
 {
 	size_t keyIndex = 0, col = 0, row = 0;;
-	char c = '-';
 	std::string str, coded;
 	
 	int controlIndex = 0;
@@ -83,20 +82,46 @@ void Vigenere::decrypt(const std::string key)
 
 		for (size_t i = 0; i < str.length(); i++) // every char in word
 		{
+			col = row = 500; // reset vars
 			controlIndex++;
 
-			str[i] = std::toupper(str[i]);
-			col = str[i] - 65;
-			row = key[keyIndex%key.length()] - 65;
-			if (col >= 0 && col <= 26 && row >= 0 && row <= 26)
+			//str[i] = std::toupper(str[i]);
+
+			// find correct row in table
+			for (size_t pos_row = 0; pos_row < tab.size(); pos_row++)
 			{
-				coded += tab[col][row];
-				keyIndex++;
-			} 
+				
+				if (tab[pos_row][0] == key[keyIndex%key.length()])
+				{
+					row = pos_row;
+					break;
+				}
+			}
+			
+
+			// in found row find correct column
+			for (size_t pos_col = 0; pos_col < tab[row].size(); pos_col++)
+			{
+				if (tab[row][pos_col] == str[i])
+				{
+					col = pos_col;
+					break;
+				}
+			}
+
+			// read orginally char in found column
+			if (col <= 26 && row <= 26)
+			{
+				coded += tab[0][col];
+				
+			}
 			else
 			{
 				coded += str[i];
 			}
+
+			keyIndex++;
+
 		}
 		//printf("%s \n", coded.c_str());
 		fileOutput << coded << " ";
@@ -105,7 +130,7 @@ void Vigenere::decrypt(const std::string key)
 		if (controlIndex > 100)
 		{
 			controlIndex = 0;
-			break;
+			//break;
 		}
 	}
 	fileOutput << "\n";
