@@ -8,7 +8,7 @@
 class Vigenere
 {
 public:
-	Vigenere();
+	Vigenere(const std::string filepathCipheredText);
 	~Vigenere();
 
 	void Init();
@@ -16,6 +16,7 @@ public:
 
 
 private:
+	const std::string filepathCipheredText;
 	std::fstream fileOutput;
 	std::vector<std::vector<char>> tab;
 };

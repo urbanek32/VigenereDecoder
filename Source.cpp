@@ -9,13 +9,13 @@
 
 int main(int _Argc, char ** _Argv)
 {
-	Vigenere *vig = new Vigenere();
+	Vigenere *vig = new Vigenere("textToDecode.txt");
 	vig->Init();
 
 	std::string keyPhrase;
 	size_t counter = 0;
-	std::fstream keys("kluczyk.txt", std::ios::in);
 
+	std::fstream keys("keys.txt", std::ios::in);
 	while (keys >> keyPhrase)
 	{
 		vig->decrypt(keyPhrase);
@@ -26,6 +26,7 @@ int main(int _Argc, char ** _Argv)
 			printf("%d ", counter);
 		}
 	}
+	keys.close();
 
 	delete vig;
 	//system("pause");

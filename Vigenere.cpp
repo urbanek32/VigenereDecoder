@@ -5,16 +5,11 @@
 #include <cctype>
 
 
-Vigenere::Vigenere() : tab(26, std::vector<char>(26)), fileOutput("output.txt", std::ios::app)
+Vigenere::Vigenere(const std::string filepathCT) : tab(26, std::vector<char>(26)),
+fileOutput("output.txt", std::ios::app),
+filepathCipheredText(filepathCT)
 {
-	/*for (size_t i = 0; i < tab.size(); i++)
-	{
-		for (size_t j = 0; j < tab[i].size(); j++)
-		{
-			tab[i][j] = '-';
-		}
-	}*/
-
+	
 }
 
 
@@ -35,7 +30,7 @@ Vigenere::~Vigenere()
 void Vigenere::Init()
 {
 	// read orginally alphabet into vector
-	std::fstream file("alphabet2.txt", std::ios::in);
+	std::fstream file("alphabet.txt", std::ios::in);
 	for (size_t i = 0; i < tab.size(); i++)
 	{
 		file >> tab[0][i]; // read every char into vector
@@ -49,20 +44,7 @@ void Vigenere::Init()
 		tab[i] = tab[0]; // duplicate row with first row
 		std::rotate(tab[i].begin(), tab[i].begin() + i, tab[i].end()); // shift left current row
 	}
-	
-
-
-	
-	/*for (size_t i = 0; i < tab.size(); i++)
-	{
-		for (size_t j = 0; j < tab[i].size(); j++)
-		{
-			printf("%c ", tab[i][j]);
-		}
-		printf("\n");
-	}
-	printf("\n\n");*/
-	
+		
 }
 
 void Vigenere::decrypt(const std::string key)
@@ -74,18 +56,17 @@ void Vigenere::decrypt(const std::string key)
 
 
 	fileOutput << "[" << key << "] "; // add key before decoded string
-	std::fstream filePlainText("szyfr.txt", std::ios::in);
-	while (filePlainText >> str) // every word
+	std::fstream fileCipheredText(filepathCipheredText, std::ios::in);
+	while (fileCipheredText >> str) // every word
 	{
 		coded.clear(); // reset output word
-		keyIndex = 0; // reset index of key word
 
 		for (size_t i = 0; i < str.length(); i++) // every char in word
 		{
 			col = row = 500; // reset vars
 			controlIndex++;
 
-			//str[i] = std::toupper(str[i]);
+			str[i] = std::toupper(str[i]);
 
 			// find correct row in table
 			for (size_t pos_row = 0; pos_row < tab.size(); pos_row++)
@@ -98,7 +79,6 @@ void Vigenere::decrypt(const std::string key)
 				}
 			}
 			
-
 			// in found row find correct column
 			for (size_t pos_col = 0; pos_col < tab[row].size(); pos_col++)
 			{
@@ -113,6 +93,7 @@ void Vigenere::decrypt(const std::string key)
 			if (col <= 26 && row <= 26)
 			{
 				coded += tab[0][col];
+				keyIndex++;
 				
 			}
 			else
@@ -120,7 +101,7 @@ void Vigenere::decrypt(const std::string key)
 				coded += str[i];
 			}
 
-			keyIndex++;
+			
 
 		}
 		//printf("%s \n", coded.c_str());
@@ -134,5 +115,5 @@ void Vigenere::decrypt(const std::string key)
 		}
 	}
 	fileOutput << "\n";
-	filePlainText.close();
+	fileCipheredText.close();
 }
